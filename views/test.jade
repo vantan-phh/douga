@@ -1,0 +1,13 @@
+extends layout
+
+block head
+  script(src="javascripts/video.js")
+  script(src="/socket.io/socket.io.js")
+  script(src="http://cdn.peerjs.com/0.3/peer.js")
+  link(type='rel="stylesheet", href="stylesheets/test.css"')
+  
+block body
+  video.video("muted")
+  div.remote
+  button.offer
+  
