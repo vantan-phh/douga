@@ -9,8 +9,8 @@ var socket = require("socket.io");
 var debug = require("debug")("douga:server");
 var http = require("http");
 
-var rooting = require("./rooting");
-var peerServer = require("./PeerServer");
+var rooting = require("./other/rooting");
+var peerServer = require("./other/peerServer");
 
 var app = express();
 
