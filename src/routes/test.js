@@ -1,5 +1,5 @@
-var router = require("express").Router();
-var io;
+let router = require("express").Router();
+let io;
 
 router.get("/", function(req, res) {
   if(!io) {

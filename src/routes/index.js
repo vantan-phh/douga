@@ -1,4 +1,4 @@
-var routes = {
+let routes = {
   test: require("./test"),
 }
 

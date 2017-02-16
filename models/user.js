@@ -14,16 +14,16 @@ class User {
     });
   }
 
-  static register(mail, name, password) {
+  static register(info) {
     return new Promise((resolve, reject) => {
       let query = "INSERT INTO `users` (mail, name, password, salt, created_at, update_at) VALUES(?, ?, ?, ?, ?)";
       let date = new Date();
       let salt = saltCreate();
-      let password = hash(password, salt);
+      let password = hash(info.password, salt);
 
       let insertData = [
-        mail,
-        name,
+        info.mail,
+        info.name,
         password,
         salt,
         date,
@@ -58,6 +58,7 @@ class User {
   }
 
   constructor(parts) {
+    this.id = parts.id;
     this.mail = parts.mail;
     this.name = parts.name;
     this.password = parts.password;

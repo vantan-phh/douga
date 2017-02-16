@@ -1,22 +1,22 @@
-var express = require("express");
-var favicon = require("serve-favicon");
-var logger = require("morgan");
-var cookieParser = require("cookie-parser");
-var bodyParser = require("body-parser");
-var session = require("express-session");
-var MySQLStore = require("express-mysql-session")(session);
-var socket = require("socket.io");
-var debug = require("debug")("douga:server");
-var http = require("http");
+const express = require("express");
+const favicon = require("serve-favicon");
+const logger = require("morgan");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
+const socket = require("socket.io");
+const debug = require("debug")("douga:server");
+const http = require("http");
 
-var rooting = require("./other/rooting");
-var peerServer = require("./other/peerServer");
+const rooting = require("./other/rooting");
+const peerServer = require("./other/peerServer");
 
-var app = express();
+let app = express();
 
-var server = http.createServer(app);
+let server = http.createServer(app);
 
-var io = socket(server);
+let io = socket(server);
 
 module.exports = io;
 
@@ -27,7 +27,7 @@ server.on("listening", onListening);
 app.set("views", __dirname + "/views");
 app.set("view engine", "jade");
 
-var option = {
+let option = {
   host: "localhost",
 	port: 3306,
 	user: "root",
@@ -54,7 +54,7 @@ app.use(rooting);
 app.use(peerServer);
 
 app.use(function(req, res, next) {
-  var err = new Error("Not Found");
+  let err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
@@ -67,8 +67,14 @@ app.use(function(err, req, res, next) {
   res.render("error");
 });
 
+
+
+process.on('uncaughtException', function(err) {
+  console.error(err);
+});
+
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  let port = parseInt(val, 10);
 
   if (isNaN(port)) return val;
   if (port >= 0) return port;
@@ -79,7 +85,7 @@ function normalizePort(val) {
 function onError(error) {
   if (error.syscall !== "listen") throw error;
 
-  var bind = typeof port === "string"
+  const bind = typeof port === "string"
     ? "Pipe " + port
     : "Port " + port;
 
@@ -98,8 +104,8 @@ function onError(error) {
 }
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === "string"
+  const addr = server.address();
+  const bind = typeof addr === "string"
     ? "pipe " + addr
     : "port " + addr.port;
   debug("Listening on " + bind);
