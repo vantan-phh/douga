@@ -1,16 +1,16 @@
 let router = require("express").Router();
 let io;
 
-router.get("/", function(req, res) {
+router.get("/", (req, res) => {
   if(!io) {
-    io = require("../app.js");
+    io = require("../../app");
   }
   socketStart();
   res.render("test");
 });
 
 function socketStart() {
-  io.sockets.on("connection", function(socket) {
+  io.sockets.on("connection", (socket) => {
 
   });
 }

@@ -5,11 +5,11 @@ class Post {
     return new Promsie((resolve, reject) => {
       let query = "SELECT * FROM `posts` WHERE `id` = ? LIMIT 1";
 
-      db.query(query, [id], (err, res) {
+      db.query(query, [id], (err, res) => {
         if(err) reject(err);
         if(!res.id) reject(new Error(`POST: ${id} is not found`));
 
-        resolve(new Post(res));
+        resolve(new Post(res[0]));
       });
     });
   }
@@ -26,7 +26,7 @@ class Post {
       db.query(query, insertData, (err, res) => {
         if(err) reject(err);
 
-        resolve(new Post(res));
+        resolve(new Post(res[0]));
       });
     })
 
@@ -51,3 +51,5 @@ class Post {
     });
   }
 }
+
+module.exports = Post;

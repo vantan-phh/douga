@@ -1,4 +1,6 @@
 const db = require("../db");
+const hashCreate = require("../other/hashCreate");
+const saltCreate = require("../other/saltCreate");
 
 class User {
   static find(id) {
@@ -9,36 +11,37 @@ class User {
         if(err) reject(err);
         if(res.length == 0) reject(new Error(`ID: ${id} is not found`));
 
-        resolve(new User(res));
+        resolve(new User(res[0]));
       });
     });
   }
 
-  static register(mail, name, password) {
+  static register(info) {
     return new Promise((resolve, reject) => {
-      let query = "INSERT INTO `users` (mail, name, password, salt, created_at, update_at) VALUES(?, ?, ?, ?, ?)";
+      let query = "INSERT INTO `users` (mail, name, password, salt, icon, created_at, update_at) VALUES(?, ?, ?, ?, ?, ?, ?)";
       let date = new Date();
       let salt = saltCreate();
-      let password = hash(password, salt);
+      let password = hashCreate(info.password, salt);
+      let icon = "undefined";
 
       let insertData = [
-        mail,
-        name,
+        info.email,
+        info.userName,
         password,
         salt,
+        icon,
         date,
         date
       ];
 
       db.query(query, insertData, (err, res) => {
         if(err) reject(err);
-
-        resolve(res.id);
+        resolve(res.insertId);
       })
     })
   }
 
-  static login(name, password) {
+  static login(info) {
     return new Promise((resolve, reject) => {
       let query = "SELECT * FROM `users` WHERE name = ? LIMIT 1";
 
@@ -46,7 +49,7 @@ class User {
         if(err) reject(err);
         if(!res.id) reject("missing user account");
 
-        password = hash(password, res.solt);
+        password = hashCreate(password, res.solt);
 
         if(password == res.password) {
           resolve(res.id);
@@ -58,6 +61,7 @@ class User {
   }
 
   constructor(parts) {
+    this.id = parts.id;
     this.mail = parts.mail;
     this.name = parts.name;
     this.password = parts.password;
