@@ -1,0 +1,9 @@
+.postingText {
+  width: 500px;
+  height: 100px;
+  font-size: 15px;
+  resize: none;
+  user-select: none;
+  outline: none;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}

@@ -2,6 +2,11 @@ extends layout
 
 block head
   link(rel="stylesheet", href="stylesheets/home.css")
+  script(src="javascripts/home.js")
   
 block body
-  p ようこそ！
+  div.post
+    textarea.postingText(maxlength="256" name="text" placeholder="緑茶ハイ")
+    div.postFoot
+      button.posting 投稿
+      
