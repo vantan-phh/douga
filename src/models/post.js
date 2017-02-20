@@ -7,7 +7,7 @@ class Post {
 
       db.query(query, [id], (err, res) => {
         if(err) reject(err);
-        if(!res.id) reject(new Error(`POST: ${id} is not found`));
+        if(!res[0].id) reject(new Error(`POST: ${id} is not found`));
 
         resolve(new Post(res[0]));
       });

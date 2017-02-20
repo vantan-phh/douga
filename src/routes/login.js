@@ -3,24 +3,32 @@ const db = require("../db");
 const User = require("../models/user");
 
 router.get("/", (req, res) => {
-  if(req.session.userId) res.redirect("/");
+  if(req.session.userId) {
+    res.redirect("/");
+    return;
+  }
 
   res.render("login");
 });
 
 
 router.post("/", (req, res) => {
-  if(!req.session.userId) {
-    User.login(req.body)
-    .then((userId) => {
-      req.session.userId = userId;
-    }).catch((err) => {
-      if(err == "password is incorrect") {
-        res.render("login", {err: "メールアドレスまたはパスワードが間違っています"});
-      }
-      console.error(err);
-    });
+  if(req.session.userId) {
+    res.redirect("/");
+    return;
   }
 
-  res.redirect("/");
-})
+  User.login(req.body)
+  .then((userId) => {
+    req.session.userId = userId;
+    res.redirect("/");
+  }).catch((err) => {
+    if(err == "password is incorrect" || err == "missing user account") {
+      res.render("login", {err: "メールアドレスまたはパスワードが間違っています"});
+    }
+    console.error(err);
+    res.render("error")
+  });
+});
+
+module.exports = router;

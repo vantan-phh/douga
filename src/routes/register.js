@@ -3,22 +3,27 @@ const db = require("../db");
 const User = require("../models/user");
 
 router.get("/", (req, res) => {
-  if(req.session.userId) res.redirect("/");
+  if(req.session.userId) {
+    res.redirect("/");
+    return;
+  }console.log(req);
 
   res.render("register");
 });
 
 router.post("/", (req, res) => {
-  if(!req.session.userId) {
-    User.register(req.body)
-    .then((userId) => {
-      req.session.userId = userId;
-    }).catch((err) => {
-      console.error(err);
-    });
+  if(req.session.userId) {
+    res.redirect("/");
+    return;
   }
 
-  res.redirect("/");
+  User.register(req.body)
+  .then((userId) => {
+    req.session.userId = userId;
+    res.redirect("/");
+  }).catch((err) => {
+    console.error(err);
+  });
 })
 
 module.exports = router;

@@ -1,5 +1,4 @@
-$(function() {
-
+$(() => {
   let peer = new Peer({
     host: 'localhost',
     port: 9000,
@@ -22,34 +21,33 @@ $(function() {
   let myStream;
 
   navigator.mediaDevices.getUserMedia({video: true, audio: true})
-  .then(function (stream) {
-    video[0].src = window.URL.createObjectURL(stream);
-    video[0].play();
+  .then((stream) => {
+    myVideo.src = window.URL.createObjectURL(stream);
+    myVideo.play();
     myStream = stream;
-  }).catch(function (error) {
+  }).catch((error) => {
     console.error(error);
     return;
   });
 
-  peer.on("open", function() {
+  peer.on("open", () => {
     console.log(peer.id);
   });
 
-  peer.on("call", function(call) {
+  peer.on("call", (call) => {
     call.answer(myStream);
-
-    call.on("stream", function(stream) {
-      video[1].src = window.URL.createObjectURL(stream);
+    call.on("stream", (stream) => {
+      partnerVideo.src = window.URL.createObjectURL(stream);
     });
   });
 
-  button.click(function() {
+  button.click(() => {
     let peerId = document.getElementsByClassName("peerId")[0];
     let call = peer.call(peerId, myStream);
 
-    call.on("stream", function(stream) {
-      video[1].src = window.URL.createObjectURL(stream);
-      video[1].play();
+    call.on("stream", (stream) => {
+      partnerVideo.src = window.URL.createObjectURL(stream);
+      partnerVideo.play();
     });
   });
 });

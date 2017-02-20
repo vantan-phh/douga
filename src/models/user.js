@@ -43,16 +43,16 @@ class User {
 
   static login(info) {
     return new Promise((resolve, reject) => {
-      let query = "SELECT * FROM `users` WHERE name = ? LIMIT 1";
+      let query = "SELECT * FROM `users` WHERE mail = ? LIMIT 1";
 
-      db.query(query, [name], (err, res) => {
+      db.query(query, [info.email], (err, res) => {
         if(err) reject(err);
-        if(!res.id) reject("missing user account");
+        if(!res[0].id) reject("missing user account");
 
-        password = hashCreate(password, res.solt);
+        let password = hashCreate(info.password, res[0].salt);
 
-        if(password == res.password) {
-          resolve(res.id);
+        if(password == res[0].password) {
+          resolve(res[0].id);
         }else {
           reject("password is incorrect");
         }

@@ -1,5 +1,5 @@
 let routes = {
-  topPage: require("./topPage"),
+  home: require("./home"),
   register: require("./register"),
   login: require("./login")
 }
