@@ -17,16 +17,17 @@ class Post {
   static create(info) {
     return new Promise((resolve, reject) => {
       let query = "INSERT INTO `posts` (user_id, text, created_at) VALUES(?, ?, ?)";
+      let date = new Date();
       let insertData = [
         info.user_id,
         info.text,
-        info.created_at
+        date
       ]
 
       db.query(query, insertData, (err, res) => {
         if(err) reject(err);
 
-        resolve(new Post(res[0]));
+        resolve(new Post({id: res.insertId, user_id: info.user_id, text: info.text, created_at: date}));
       });
     })
 

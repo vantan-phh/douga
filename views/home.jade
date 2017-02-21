@@ -6,7 +6,8 @@ block head
   
 block body
   div.post
-    textarea.postingText(maxlength="256" name="text" placeholder="緑茶ハイ")
+    div.kakoi
+      textarea.postingText(maxlength="256" name="text" placeholder="緑茶ハイ")
     div.postFoot
-      button.posting 投稿
+      button.posting(text="false") 投稿
       

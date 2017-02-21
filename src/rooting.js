@@ -6,6 +6,6 @@ const routes = require("./routes");
 
 app.use("/register", routes.register);
 app.use("/login", routes.login);
-app.use("/", routes.home);
+app.use("/", sessionCheck, routes.home);
 
 module.exports = app;
