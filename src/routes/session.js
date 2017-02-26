@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
 });
 
 
-router.post("/", (req, res) => {
+router.post("/login", (req, res) => {
   if(req.session.userId) {
     res.redirect("/");
     return;
@@ -30,5 +30,12 @@ router.post("/", (req, res) => {
     res.render("error")
   });
 });
+
+router.post("/logout", (req, res) => {
+  req.session.destroy();
+  res.redirect("/");
+})
+
+
 
 module.exports = router;

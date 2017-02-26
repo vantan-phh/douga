@@ -11,6 +11,8 @@ CREATE TABLE `users` (
   `password` varchar(64) NOT NULL,
   `salt` varchar(16) NOT NULL,
   `icon` varchar(256) NOT NULL,
+  `follow_count` int(11) NOT NULL,
+  `follower_count` int(11) NOT NULL,
   `created_at` datetime NOT NULL,
   `update_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -24,3 +26,8 @@ CREATE TABLE `posts` (
   `created_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+CREATE TABLE `to_follow` (
+  `follower_id` int(11) NOT NULL,
+  `target_id` int(11) NOT NULL
+)

@@ -1,7 +1,7 @@
 let routes = {
   home: require("./home"),
   register: require("./register"),
-  login: require("./login")
+  session: require("./session")
 }
 
 module.exports = routes;

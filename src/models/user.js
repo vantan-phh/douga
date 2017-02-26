@@ -18,7 +18,7 @@ class User {
 
   static register(info) {
     return new Promise((resolve, reject) => {
-      let query = "INSERT INTO `users` (mail, name, password, salt, icon, created_at, update_at) VALUES(?, ?, ?, ?, ?, ?, ?)";
+      let query = "INSERT INTO `users` SET ?";
       let date = new Date();
       let salt = saltCreate();
       let password = hashCreate(info.password, salt);
@@ -30,12 +30,15 @@ class User {
         password,
         salt,
         icon,
+        0,
+        0,
         date,
         date
       ];
 
       db.query(query, insertData, (err, res) => {
         if(err) reject(err);
+        console.log(res);
         resolve(res.insertId);
       })
     })
@@ -66,6 +69,8 @@ class User {
     this.name = parts.name;
     this.password = parts.password;
     this.salt = parts.salt;
+    this.follow_count = parts.follow_count;
+    this.follower_count = parts.follower_count;
     this.created_at = parts.created_at;
     this.updated_at = parts.updated_at;
   }
@@ -76,9 +81,80 @@ class User {
       name: this.name,
       password: this.password,
       salt: this.salt,
+      follow_count: this.follow_count,
+      follower_count: this.follower_count,
       created_at: this.created_at,
       updated_at: this.updated_at
     }
+  }
+
+  finds(ids) {
+    return new Promise((resolve, reject) => {
+      if(!ids[0]) {
+        resolve([]);
+        return
+      }
+      ids.push(ids.length);
+      let query = "SELECT * FROM `users` WHERE IN (?"
+
+      for(var i = 0; i < ids.length; i++) query += ",?";
+      query += ") LIMIT ?";
+
+      db.query(query, ids, (err, res) => {
+        if(err) reject(err);
+        resolve(res)
+      })
+    })
+  }
+
+  followUser() {
+    return new Promise((resolve, reject) => {
+      let query = "SELECT `target_id` FROM `to_follow` WHERE `follower_id` = ? LIMIT ?";
+      db.query(query, [this.id, this.follow_count], (err, res) => {
+        if(err) reject(err);
+        let targetId = [];
+
+        for(var i = 0; i < res.length; i++) targetId.push(res.target_id);
+        this.finds(targetId).then((data) => {
+          resolve({data: data, ids: targetId});
+        }).catch((err) => {
+          reject(err);
+        })
+      })
+    })
+  }
+
+  getTimeLine() {
+    return new Promise((resolve, reject) => {
+      this.followUser().then((result) => {
+        let data = result.data;
+        let ids = result.ids;
+        User.find(this.id).then((user) => {
+          data.push(user);
+          ids.push(this.id);
+          var usersData = {};
+
+          for(var i = 0; i < data.length; i++) {
+            usersData[data[i].id] = data[i];
+          }
+          let query = "SELECT * FROM `posts` WHERE `user_id` IN (?";
+          for(var i = 0; i < data.length - 1; i++) query += ",?";
+          query += ")";
+
+          db.query(query, ids, (err, res) => {
+            if(err) reject(err);
+            for(var i = 0; i < res.length; i++){
+              res[i].user = usersData[res[i].user_id];
+            }
+            resolve(res)
+          })
+        }).catch((err) => {
+          console.error(err);
+        })
+      }).catch((err) => {
+        console.error(err);
+      })
+    })
   }
 
   update() {
@@ -89,7 +165,6 @@ class User {
 
       db.query(query, [this.fields(), this.id], (err, res) => {
         if(err) reject(err);
-
         resolve(this);
       });
     });
@@ -101,7 +176,6 @@ class User {
 
       db.query(query, [this.id], (err, res) => {
         if(err) reject(err);
-
         resolve();
       })
     });

@@ -1,5 +1,6 @@
 $(() => {
   let posting = document.getElementsByClassName("posting")[0];
+  let postingPlace = document.getElementsByClassName("postingPlace")[0];
   let textArea = document.getElementsByClassName("postingText")[0];
   let inputFlag = false;
 
@@ -12,19 +13,24 @@ $(() => {
       posting.style.cursor = "pointer";
     }else if(text == "") {
       inputFlag = false;
-      posting.onclick = null;
       posting.style.backgroundColor = "#E6E6E6";
       posting.style.color = "#9F9F9F"
       posting.style.cursor = null;
     }
+    console.log(inputFlag);
   };
 
   posting.onclick = () => {
-    if(!inputFlag) return;
-    let postingText = document.getElementsByClassName("postingText")[0].value;
+    let postingText = document.getElementsByClassName("postingText")[0];
+    if(!inputFlag && postingText != "") return;
+    inputFlag = false;
     let date = new Date();
-    $.post("/posting", {text: postingText}, (data) => {
-      console.log(data)
+    $.post("/posting", {text: postingText.value}, (data) => {
+      postPush([data]);
+      postingText.value = "";
+      posting.style.backgroundColor = "#E6E6E6";
+      posting.style.color = "#9F9F9F"
+      posting.style.cursor = null;
     }, "json");
   }
 
@@ -41,5 +47,14 @@ $(() => {
   posting.onmouseout = () => {
     if(!inputFlag) return;
     posting.style.backgroundColor = "#4285F4";
+  }
+
+  function postPush(data) {
+    for(var i = 0; i < data.length; i++) {
+      var newDiv = document.createElement("div");
+      newDiv.innerHTML = `<img class="icon" src=http://localhost:3000/profile_image/${data[i].icon}.png><div class="postRight"><div class="nameSpace"><h5>${data[i].name}</h5><div class="textSpace"><p>${data[i].text}</p></div></div></div>`
+      newDiv.className = "allPosts";
+      postingPlace.insertBefore(newDiv, postingPlace.firstChild);
+    }
   }
 });

@@ -30,7 +30,6 @@ class Post {
         resolve(new Post({id: res.insertId, user_id: info.user_id, text: info.text, created_at: date}));
       });
     })
-
   }
 
   constructor(parts) {

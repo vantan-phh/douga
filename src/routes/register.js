@@ -6,7 +6,7 @@ router.get("/", (req, res) => {
   if(req.session.userId) {
     res.redirect("/");
     return;
-  }console.log(req);
+  }
 
   res.render("register");
 });

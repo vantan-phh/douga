@@ -1,9 +1,9 @@
 
 .post {
-  width: 500px;
+  width: 550px;
+  margin: auto;
   border: 1px solid rgba(0, 0, 0, 0.3);
   background-color: white;
-  margin: auto;
 }
 
 .kakoi {
@@ -11,8 +11,8 @@
 }
 
 .postingText {
-  width: 480px;
-  height: 100px;
+  width: 530px;
+  height: 70px;
   font-size: 15px;
   padding: 0px;
   resize: none;
@@ -23,7 +23,7 @@
 
 .postFoot {
   height: 50px;
-  width: 500px;
+  width: 550px;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -41,3 +41,42 @@
   border-radius: 3px;
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
 }
+
+.allPosts {
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.icon {
+  height: 50px;
+  width: 50px;
+  margin: 10px 10px 20px 10px;
+  border-radius: 5px;
+}
+
+.timeLine {
+  width: 550px;
+  margin: auto;
+}
+
+.textSpace {
+  width: 450px;
+  margin-right: 10px;
+}
+
+.textSpace p {
+  margin: 0;
+}
+
+.nameSpace h5 {
+  margin: 5px 0px 0px 0px;
+}
+
+.postRight {
+  float: right;
+}
+/*
+.kakouyo {
+  background-color:
+}*/

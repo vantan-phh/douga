@@ -5,7 +5,7 @@ const sessionCheck = require("./other/sessionCheck.js");
 const routes = require("./routes");
 
 app.use("/register", routes.register);
-app.use("/login", routes.login);
+app.use("/session", routes.session);
 app.use("/", sessionCheck, routes.home);
 
 module.exports = app;

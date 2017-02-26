@@ -1,9 +1,21 @@
 const router = require("express").Router();
 const server = require("../../app");
+const User = require("../models/user")
 const Post = require("../models/post");
+const fs = require("fs");
+
+let filePath = "/Users/qazwsxedcrfvtgbyhnujmikol/src/github.com/myApp/douga/";
 
 router.get("/", (req, res) => {
-  res.render("home");
+  User.find(req.session.userId).then((user) => {
+    user.getTimeLine().then((data) => {
+      res.render("home", {posts: data});
+    }).catch((err) => {
+      console.error(err);
+    });
+  }).catch((err) => {
+    console.error(err);
+  });
 });
 
 router.post("/posting", (req, res) => {
@@ -12,6 +24,18 @@ router.post("/posting", (req, res) => {
     res.send(JSON.stringify(data));
   }).catch((err) => {
     console.error(err);
+  });
+});
+
+router.get("/profile_image/:image_name", (req, res) => {
+  fs.readFile(`${filePath}/public/images/${req.params.image_name}`, (err, image) => {
+    if(err) {
+      console.error(err);
+      return;
+    }
+
+    res.set("Content-Type", "image/png");
+    res.send(image);
   });
 });
 
