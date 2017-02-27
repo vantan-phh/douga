@@ -16,6 +16,23 @@ class User {
     });
   }
 
+  static publicFind(id) {
+    return new Promise((resolve, reject) => {
+      User.find(id).then((user) => {
+        let publicUser = {
+          id: user.id,
+          name: user.name,
+          follow_count: user.follow_count,
+          follower_count: user.follower_count
+        };
+        resolve(publicUser);
+
+      }).catch((err) => {
+        reject(err)
+      })
+    })
+  }
+
   static register(info) {
     return new Promise((resolve, reject) => {
       let query = "INSERT INTO `users` SET ?";
@@ -38,7 +55,6 @@ class User {
 
       db.query(query, insertData, (err, res) => {
         if(err) reject(err);
-        console.log(res);
         resolve(res.insertId);
       })
     })
@@ -99,7 +115,6 @@ class User {
       let query = "SELECT * FROM `users` WHERE IN (?"
 
       for(var i = 0; i < ids.length; i++) query += ",?";
-
       query += ") LIMIT ?";
 
       db.query(query, ids, (err, res) => {
@@ -137,7 +152,7 @@ class User {
         let data = result.data;
         let ids = result.ids;
 
-        User.find(this.id).then((user) => {
+        User.publicFind(this.id).then((user) => {
           data.push(user);
           ids.push(this.id);
 

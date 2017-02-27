@@ -1,4 +1,5 @@
 const db = require("../db");
+const User = require("./user");
 
 class Post {
   static find(id) {
@@ -16,19 +17,24 @@ class Post {
 
   static create(info) {
     return new Promise((resolve, reject) => {
-      let query = "INSERT INTO `posts` (user_id, text, created_at) VALUES(?, ?, ?)";
-      let date = new Date();
-      let insertData = [
-        info.user_id,
-        info.text,
-        date
-      ]
 
-      db.query(query, insertData, (err, res) => {
-        if(err) reject(err);
+      User.publicFind(info.user_id).then((user) => {
+        let query = "INSERT INTO `posts` (user_id, text, created_at) VALUES(?, ?, ?)";
+        let date = new Date();
+        let insertData = [
+          info.user_id,
+          info.text,
+          date
+        ];
 
-        resolve(new Post({id: res.insertId, user_id: info.user_id, text: info.text, created_at: date}));
-      });
+        db.query(query, insertData, (err, res) => {
+          if(err) reject(err);
+
+          resolve({id: res.insertId, user_id: info.user_id, text: info.text, user: user, created_at: date});
+        });
+      }).catch((err) => {
+        reject(err);
+      })
     })
   }
 

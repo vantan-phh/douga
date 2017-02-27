@@ -21,14 +21,15 @@ router.get("/", (req, res) => {
 router.post("/posting", (req, res) => {
   Post.create({user_id: req.session.userId, text: req.body.text})
   .then((data) => {
-    res.send(JSON.stringify(data));
+    console.log(data);
+    res.send(data);
   }).catch((err) => {
     console.error(err);
   });
 });
 
 router.get("/profile_image/:image_name", (req, res) => {
-  fs.readFile(`${filePath}/public/images/${req.params.image_name}`, (err, image) => {
+  fs.readFile(`${filePath}/images/${req.params.image_name}`, (err, image) => {
     if(err) {
       console.error(err);
       return;
