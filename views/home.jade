@@ -2,27 +2,30 @@ extends layout
 
 block head
   link(rel="stylesheet", href="stylesheets/home.css")
+  link(rel="stylesheet", href="stylesheets/header.css")
   script(src="javascripts/home.js")
   
 block body
   include header
-  div.timeLine
-    div.kakouyo
-      div.post
-        div.kakoi
-          textarea.postingText(maxlength="256" name="text" placeholder="緑茶ハイ")
-        div.postFoot
-          button.posting(text="false") 投稿
-    div.postingPlace
-      - posts.forEach(function(data) {
-        div.allPosts
-          - let src = `http://localhost:3000/profile_image/${data.user.icon}.png`
-          img.icon(src=src)
-          div.postRight
-            div.nameSpace
-              h5 #{data.user.name}
-            div.textSpace
-              p  #{data.text}
-      - })
+  div.body
+    div.profile
+    div.timeLine
+      div.kakouyo
+        div.post
+          div.kakoi
+            textarea.postingText(maxlength="256" name="text" placeholder="緑茶ハイ")
+          div.postFoot
+            button.posting(text="false") 投稿
+      div.postingPlace
+        - posts.forEach(function(data) {
+          div.allPosts
+            - let src = `http://localhost:3000/profile_image/${data.user.icon}.png`
+            img.icon(src=src)
+            div.postRight
+              div.nameSpace
+                h5 #{data.user.name}
+              div.textSpace
+                p  #{data.text}
+        - })
     
       

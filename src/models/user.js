@@ -95,9 +95,11 @@ class User {
         return
       }
       ids.push(ids.length);
+
       let query = "SELECT * FROM `users` WHERE IN (?"
 
       for(var i = 0; i < ids.length; i++) query += ",?";
+
       query += ") LIMIT ?";
 
       db.query(query, ids, (err, res) => {
@@ -110,11 +112,15 @@ class User {
   followUser() {
     return new Promise((resolve, reject) => {
       let query = "SELECT `target_id` FROM `to_follow` WHERE `follower_id` = ? LIMIT ?";
+
       db.query(query, [this.id, this.follow_count], (err, res) => {
         if(err) reject(err);
         let targetId = [];
 
-        for(var i = 0; i < res.length; i++) targetId.push(res.target_id);
+        for(var i = 0; i < res.length; i++) {
+          targetId.push(res.target_id);
+        }
+
         this.finds(targetId).then((data) => {
           resolve({data: data, ids: targetId});
         }).catch((err) => {
@@ -126,18 +132,22 @@ class User {
 
   getTimeLine() {
     return new Promise((resolve, reject) => {
+
       this.followUser().then((result) => {
         let data = result.data;
         let ids = result.ids;
+
         User.find(this.id).then((user) => {
           data.push(user);
           ids.push(this.id);
+
           var usersData = {};
 
           for(var i = 0; i < data.length; i++) {
             usersData[data[i].id] = data[i];
           }
           let query = "SELECT * FROM `posts` WHERE `user_id` IN (?";
+
           for(var i = 0; i < data.length - 1; i++) query += ",?";
           query += ")";
 
@@ -148,11 +158,60 @@ class User {
             }
             resolve(res)
           })
+
         }).catch((err) => {
           console.error(err);
         })
+
       }).catch((err) => {
         console.error(err);
+      })
+    })
+  }
+
+  whatFollow(targetId) {
+    return new Promise((resolve, reject) => {
+      let query = "SELECT * FROM `to_follow` WHERE follower_id = ? & target_id = ? LIMIT 1";
+
+      db.query(query, [this.id, target_id], (err, res) => {
+        if(err) reject(err);
+        resolve(data);
+      })
+    })
+  }
+
+  toFollow(targetId) {
+    return new Promise((resolve, reject) => {
+      this.whatFollow(targetId).then((data) => {
+        if(!data[0]) {
+          let query = "INSERT INTO `to_follow` (follower_id, target_id) SET ?";
+          let insertData = [{
+            follower_id: this.id,
+            target_id: targetId
+          }]
+
+          db.query(query, insertData, (err, res) => {
+            if(err) reject(err);
+            resolve(true);
+          })
+        }
+        resolve(false);
+      })
+    })
+  }
+
+  unFollow(targetId) {
+    return new Promise((resolve, reject) => {
+      this.whatFollow(targetId).then((data) => {
+        if(data[0]) {
+          let query = "DELETE FROM `to_follow` WHERE follower_id = ?, target_id = ?";
+
+          db.query(query, [this.id, targetId], (err, res) => {
+            if(err) reject(err);
+            resolve(true);
+          })
+        }
+        resolve(false);
       })
     })
   }

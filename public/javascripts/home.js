@@ -17,7 +17,6 @@ $(() => {
       posting.style.color = "#9F9F9F"
       posting.style.cursor = null;
     }
-    console.log(inputFlag);
   };
 
   posting.onclick = () => {
