@@ -1,5 +1,10 @@
 header
-  div.headerLight
+  div.headerLeft
     div.searchBox
       input.textarea(type="text" maxlength="256" name="text" placeholder="検索" autocomplete="off")
-      input.searchButton(type="image" src="http://localhost:3000/profile_image/searchButton.png")
+      div.buttonSpace
+        input.searchButton(type="image" src="/images/searchButton.png")
+  div.headerRight
+    - let src = `images/${user.icon}.png`
+    img.icon(src=src)
+        

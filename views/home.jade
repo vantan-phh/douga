@@ -16,16 +16,18 @@ block body
             textarea.postingText(maxlength="256" name="text" placeholder="緑茶ハイ")
           div.postFoot
             button.posting(text="false") 投稿
+        div.update
+          h4 更新
       div.postingPlace
-        - posts.forEach(function(data) {
+        - for(var i = posts.length - 1; i >= 0; i--) {
           div.allPosts
-            - let src = `http://localhost:3000/profile_image/${data.user.icon}.png`
+            - let src = `/images/${posts[i].user.icon}.png`
             img.icon(src=src)
             div.postRight
               div.nameSpace
-                h5 #{data.user.name}
+                h5 #{posts[i].user.name}
               div.textSpace
-                p  #{data.text}
-        - })
+                p  #{posts[i].text}
+        - }
     
       

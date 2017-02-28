@@ -53,6 +53,7 @@
   width: 50px;
   margin: 10px 10px 20px 10px;
   border-radius: 5px;
+  cursor: pointer;
 }
 
 .timeLine {
@@ -71,10 +72,27 @@
 
 .nameSpace h5 {
   margin: 5px 0px 0px 0px;
+  cursor: pointer;
 }
 
 .postRight {
   float: right;
+}
+
+.update {
+  background-color: #F5F8FA;
+  color: #0084B4;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  height: 40px;
+  cursor: pointer;
+}
+
+.update h4 {
+  margin: 0;
+  padding-top: 8px;
+  user-select: none;
+  text-align: center;
 }
 
 .body {

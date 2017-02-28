@@ -50,10 +50,10 @@ $(() => {
 
   function postPush(data) {
     console.log(data);
-    
+
     for(var i = 0; i < data.length; i++) {
       var newDiv = document.createElement("div");
-      newDiv.innerHTML = `<img class="icon" src=http://localhost:3000/profile_image/${data[i].user.icon}.png><div class="postRight"><div class="nameSpace"><h5>${data[i].user.name}</h5><div class="textSpace"><p>${data[i].text}</p></div></div></div>`
+      newDiv.innerHTML = `<img class="icon" src=/images/${data[i].user.icon}.png><div class="postRight"><div class="nameSpace"><h5>${data[i].user.name}</h5><div class="textSpace"><p>${data[i].text}</p></div></div></div>`
       newDiv.className = "allPosts";
       postingPlace.insertBefore(newDiv, postingPlace.firstChild);
     }

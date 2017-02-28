@@ -1,5 +1,6 @@
 const db = require("../db");
 const User = require("./user");
+const elasticSearchClient = require("../other/elasticServer.js");
 
 class Post {
   static find(id) {
@@ -30,7 +31,13 @@ class Post {
         db.query(query, insertData, (err, res) => {
           if(err) reject(err);
 
-          resolve({id: res.insertId, user_id: info.user_id, text: info.text, user: user, created_at: date});
+          elasticSearchClient.index("paku", "posts", {
+            id: res.insertId,
+            text: info.text
+          })
+          .on("data", (data) => {
+            resolve({id: res.insertId, user_id: info.user_id, text: info.text, user: user, created_at: date});
+          }).exec();
         });
       }).catch((err) => {
         reject(err);

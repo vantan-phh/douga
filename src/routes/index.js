@@ -1,7 +1,8 @@
 let routes = {
   home: require("./home"),
   register: require("./register"),
-  session: require("./session")
+  session: require("./session"),
+  search: require("./search")
 }
 
 module.exports = routes;
