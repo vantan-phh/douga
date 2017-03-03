@@ -19,7 +19,7 @@ class Post {
   static create(info) {
     return new Promise((resolve, reject) => {
 
-      User.publicFind(info.user_id).then((user) => {
+      User.find(info.user_id).then((user) => {
         let query = "INSERT INTO `posts` (user_id, text, created_at) VALUES(?, ?, ?)";
         let date = new Date();
         let insertData = [
@@ -31,17 +31,86 @@ class Post {
         db.query(query, insertData, (err, res) => {
           if(err) reject(err);
 
-          elasticSearchClient.index("paku", "posts", {
+          elasticSearchClient.index("psns", "posts", {
             id: res.insertId,
-            text: info.text
+            text: info.text,
+            user_id: info.user_id
           })
           .on("data", (data) => {
             resolve({id: res.insertId, user_id: info.user_id, text: info.text, user: user, created_at: date});
-          }).exec();
+          })
+          .on("error", (err) => {
+            reject(err);
+          })
+          .exec();
         });
       }).catch((err) => {
         reject(err);
       })
+    })
+  }
+
+  static search(text) {
+    return new Promise((resolve, reject) => {
+      text = "\"" + text + "\"";
+
+      elasticSearchClient.search("psns", "posts", {
+        "query" : {
+          "query_string": {
+            "default_field" : "text",
+            "query": text
+          }
+        },
+        "size": 10,
+        "sort": [{
+          "id": {
+            "order": "desc"
+          }
+        }]
+      }).on("data", (data) => {
+        data = JSON.parse(data);
+
+        if(data.error) {
+          reject(data);
+          return;
+        }
+
+        let posts = {};
+        let duplicateId = {};
+        let ids = [];
+
+        data.hits.hits.forEach((hit) => {
+          let post = hit._source;
+
+          posts[post.user_id]
+          ? posts[post.user_id].push(post)
+          : posts[post.user_id] = [post];
+
+          if(!duplicateId[post.user_id]) {
+            duplicateId[post.user_id] = true;
+            ids.push(post.user_id)
+          }
+        });
+
+        User.publicFinds(ids).then((users) => {
+          let sendData = [];
+
+          users.forEach((user) => {
+            posts[user.id].forEach((post) => {
+              post.user = user;
+              sendData.push(post)
+            })
+          });
+
+          resolve(sendData);
+        }).catch((err) => {
+          reject(err);
+        })
+      })
+      .on("error", (err) => {
+        reject(err)
+      })
+      .exec();
     })
   }
 

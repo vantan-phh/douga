@@ -1,33 +1,24 @@
 extends layout
 
 block head
-  link(rel="stylesheet", href="stylesheets/home.css")
+  link(rel="stylesheet", href="stylesheets/search.css")
   link(rel="stylesheet", href="stylesheets/header.css")
-  script(src="javascripts/home.js")
-  
+
 block body
   include header
   div.body
-    div.profile
     div.timeLine
-      div.kakouyo
-        div.post
-          div.kakoi
-            textarea.postingText(maxlength="256" name="text" placeholder="緑茶ハイ")
-          div.postFoot
-            button.posting(text="false") 投稿
-        div.update
-          h4 更新
-      div.postingPlace
+      div.update
+        h4 更新
+      div.posts
         - for(var i = posts.length - 1; i >= 0; i--) {
           div.allPosts
             - let src = `/images/${posts[i].user.icon}.png`
             img.icon(src=src)
             div.postRight
               div.nameSpace
-                a #{posts[i].user.name}
+                h5 #{posts[i].user.name}
               div.textSpace
                 p  #{posts[i].text}
         - }
     
-      

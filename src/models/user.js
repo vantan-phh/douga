@@ -16,6 +16,26 @@ class User {
     });
   }
 
+  static finds(ids) {
+    return new Promise((resolve, reject) => {
+      if(!ids[0]) {
+        resolve([]);
+        return
+      }
+      let query = "SELECT * FROM `users` WHERE `id` IN (?"
+
+      for(var i = 0; i < ids.length - 1; i++) query += ",?";
+      query += ") LIMIT ?";
+
+      ids.push(ids.length);
+
+      db.query(query, ids, (err, res) => {
+        if(err) reject(err);
+        resolve(res)
+      })
+    })
+  }
+
   static publicFind(id) {
     return new Promise((resolve, reject) => {
       User.find(id).then((user) => {
@@ -29,6 +49,27 @@ class User {
 
       }).catch((err) => {
         reject(err)
+      })
+    })
+  }
+
+  static publicFinds(ids) {
+    return new Promise((resolve, reject) => {
+      User.finds(ids).then((users) => {
+        let publicUsers = [];
+
+        users.forEach((user) => {
+          publicUsers.push({
+            id: user.id,
+            name: user.name,
+            follow_count: user.follow_count,
+            follower_count: user.follower_count
+          })
+        })
+        resolve(publicUsers);
+
+      }).catch((err) => {
+        reject(err);
       })
     })
   }
@@ -104,26 +145,6 @@ class User {
     }
   }
 
-  finds(ids) {
-    return new Promise((resolve, reject) => {
-      if(!ids[0]) {
-        resolve([]);
-        return
-      }
-      ids.push(ids.length);
-
-      let query = "SELECT * FROM `users` WHERE IN (?"
-
-      for(var i = 0; i < ids.length; i++) query += ",?";
-      query += ") LIMIT ?";
-
-      db.query(query, ids, (err, res) => {
-        if(err) reject(err);
-        resolve(res)
-      })
-    })
-  }
-
   followUser() {
     return new Promise((resolve, reject) => {
       let query = "SELECT `target_id` FROM `to_follow` WHERE `follower_id` = ? LIMIT ?";
@@ -136,7 +157,7 @@ class User {
           targetId.push(res.target_id);
         }
 
-        this.finds(targetId).then((data) => {
+        User.finds(targetId).then((data) => {
           resolve({data: data, ids: targetId});
         }).catch((err) => {
           reject(err);

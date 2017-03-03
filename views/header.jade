@@ -1,10 +1,16 @@
 header
-  div.headerLeft
-    div.searchBox
-      input.textarea(type="text" maxlength="256" name="text" placeholder="検索" autocomplete="off")
-      div.buttonSpace
-        input.searchButton(type="image" src="/images/searchButton.png")
-  div.headerRight
-    - let src = `images/${user.icon}.png`
-    img.icon(src=src)
+  div.head
+    div.headerLeft
+      nav.nav
+        ul.menu
+          li.li
+            a.hov(href="/") ホーム
+      div.searchBox
+        form(action="/search" method="post")
+          input.textarea(type="text" maxlength="256" name="text" placeholder="検索" autocomplete="off")
+          div.buttonSpace
+            input.searchButton(type="image" src="/images/searchButton.png")
+    div.headerRight
+      - let src = `images/${user.icon}.png`
+      img.icon(src=src)
         

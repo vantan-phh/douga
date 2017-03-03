@@ -2,10 +2,15 @@ $(() => {
   let posting = document.getElementsByClassName("posting")[0];
   let postingPlace = document.getElementsByClassName("postingPlace")[0];
   let textArea = document.getElementsByClassName("postingText")[0];
+  let hov = document.getElementsByClassName("hov")[0];
   let inputFlag = false;
+
+  hov.style.borderBottom = "5px solid #0084B4";
+  hov.style.color = "#0084B4";
 
   textArea.onkeyup = () => {
     let text = document.getElementsByClassName("postingText")[0].value;
+
     if(!inputFlag && text != "") {
       inputFlag = true;
       posting.style.backgroundColor = "#4285F4";
@@ -22,8 +27,10 @@ $(() => {
   posting.onclick = () => {
     let postingText = document.getElementsByClassName("postingText")[0];
     if(!inputFlag && postingText != "") return;
+
     inputFlag = false;
     let date = new Date();
+
     $.post("/posting", {text: postingText.value}, (data) => {
       postPush([data]);
       postingText.value = "";
@@ -49,7 +56,6 @@ $(() => {
   }
 
   function postPush(data) {
-    console.log(data);
 
     for(var i = 0; i < data.length; i++) {
       var newDiv = document.createElement("div");
