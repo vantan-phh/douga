@@ -8,8 +8,15 @@ class User {
       let query = "SELECT * FROM `users` WHERE `id` = ? LIMIT 1";
 
       db.query(query, [id], (err, res) => {
-        if(err) reject(err);
-        if(res.length == 0) reject(new Error(`ID: ${id} is not found`));
+        if(err) {
+          reject(err);
+          return;
+        }
+
+        if(res.length == 0) {
+          resolve(false);
+          return;
+        }
 
         resolve(new User(res[0]));
       });
@@ -20,7 +27,7 @@ class User {
     return new Promise((resolve, reject) => {
       if(!ids[0]) {
         resolve([]);
-        return
+        return;
       }
       let query = "SELECT * FROM `users` WHERE `id` IN (?"
 
@@ -30,10 +37,14 @@ class User {
       ids.push(ids.length);
 
       db.query(query, ids, (err, res) => {
-        if(err) reject(err);
+        if(err) {
+          reject(err);
+          return;
+        }
+
         resolve(res)
-      })
-    })
+      });
+    });
   }
 
   static publicFind(id) {
@@ -45,12 +56,13 @@ class User {
           follow_count: user.follow_count,
           follower_count: user.follower_count
         };
+
         resolve(publicUser);
 
       }).catch((err) => {
         reject(err)
-      })
-    })
+      });
+    });
   }
 
   static publicFinds(ids) {
@@ -64,14 +76,15 @@ class User {
             name: user.name,
             follow_count: user.follow_count,
             follower_count: user.follower_count
-          })
-        })
+          });
+        });
+
         resolve(publicUsers);
 
       }).catch((err) => {
         reject(err);
-      })
-    })
+      });
+    });
   }
 
   static register(info) {
@@ -95,10 +108,14 @@ class User {
       ];
 
       db.query(query, insertData, (err, res) => {
-        if(err) reject(err);
+        if(err) {
+          reject(err);
+          return;
+        }
+        
         resolve(res.insertId);
-      })
-    })
+      });
+    });
   }
 
   static login(info) {
@@ -106,7 +123,10 @@ class User {
       let query = "SELECT * FROM `users` WHERE mail = ? LIMIT 1";
 
       db.query(query, [info.email], (err, res) => {
-        if(err) reject(err);
+        if(err) {
+          reject(err);
+          return;
+        }
         if(!res[0].id) reject("missing user account");
 
         let password = hashCreate(info.password, res[0].salt);
@@ -116,8 +136,8 @@ class User {
         }else {
           reject("password is incorrect");
         }
-      })
-    })
+      });
+    });
   }
 
   constructor(parts) {
@@ -150,7 +170,10 @@ class User {
       let query = "SELECT `target_id` FROM `to_follow` WHERE `follower_id` = ? LIMIT ?";
 
       db.query(query, [this.id, this.follow_count], (err, res) => {
-        if(err) reject(err);
+        if(err) {
+          reject(err);
+          return;
+        }
         let targetId = [];
 
         for(var i = 0; i < res.length; i++) {
@@ -159,14 +182,15 @@ class User {
 
         User.finds(targetId).then((data) => {
           resolve({data: data, ids: targetId});
+
         }).catch((err) => {
           reject(err);
-        })
-      })
-    })
+        });
+      });
+    });
   }
 
-  getTimeLine() {
+  getTimeLine(lastId) {
     return new Promise((resolve, reject) => {
 
       this.followUser().then((result) => {
@@ -185,24 +209,49 @@ class User {
           let query = "SELECT * FROM `posts` WHERE `user_id` IN (?";
 
           for(var i = 0; i < data.length - 1; i++) query += ",?";
-          query += ")";
+          query += ") LIMIT 30 ";
+
+          if(lastId) query += "OFFSET " + (lastId - 46);
 
           db.query(query, ids, (err, res) => {
-            if(err) reject(err);
-            for(var i = 0; i < res.length; i++){
-              res[i].user = usersData[res[i].user_id];
+            if(err) {
+              reject(err);
+              return;
+            }
+
+            if(res[0]) {
+              for(var i = 0; i < res.length; i++) {
+                res[i].user = usersData[res[i].user_id];
+              }
             }
             resolve(res)
-          })
+          });
 
         }).catch((err) => {
-          console.error(err);
-        })
+          reject(err);
+        });
 
       }).catch((err) => {
-        console.error(err);
-      })
-    })
+        reject(err);
+      });
+    });
+  }
+
+  getPosts(lastId) {
+    return new Promise((resolve, reject) => {
+      let query = "SELECT * FROM `posts` WHERE user_id = ? LIMIT 30 ";
+
+      if(lastId) query += "OFFSET " + (lastId - 46);
+
+      db.query(query, [this.id], (err, res) => {
+        if(err) {
+          reject(err);
+          return;
+        }
+
+        resolve(res);
+      });
+    });
   }
 
   whatFollow(targetId) {
@@ -210,10 +259,13 @@ class User {
       let query = "SELECT * FROM `to_follow` WHERE follower_id = ? & target_id = ? LIMIT 1";
 
       db.query(query, [this.id, target_id], (err, res) => {
-        if(err) reject(err);
+        if(err) {
+          reject(err);
+          return;
+        }
         resolve(data);
-      })
-    })
+      });
+    });
   }
 
   toFollow(targetId) {
@@ -227,13 +279,18 @@ class User {
           }]
 
           db.query(query, insertData, (err, res) => {
-            if(err) reject(err);
+            if(err) {
+              reject(err);
+              return;
+            }
+
             resolve(true);
-          })
+          });
         }
+
         resolve(false);
-      })
-    })
+      });
+    });
   }
 
   unFollow(targetId) {
@@ -243,13 +300,18 @@ class User {
           let query = "DELETE FROM `to_follow` WHERE follower_id = ?, target_id = ?";
 
           db.query(query, [this.id, targetId], (err, res) => {
-            if(err) reject(err);
+            if(err) {
+              reject(err);
+              return;
+            }
+
             resolve(true);
-          })
+          });
         }
+
         resolve(false);
-      })
-    })
+      });
+    });
   }
 
   update() {
@@ -259,7 +321,11 @@ class User {
       let query = "UPDATE `users` SET ? WHERE `id` = ? LIMIT 1";
 
       db.query(query, [this.fields(), this.id], (err, res) => {
-        if(err) reject(err);
+        if(err) {
+          reject(err);
+          return;
+        }
+
         resolve(this);
       });
     });
@@ -270,9 +336,13 @@ class User {
       let query = "DELETE FROM `users` WHERE `id` = ?";
 
       db.query(query, [this.id], (err, res) => {
-        if(err) reject(err);
+        if(err) {
+          reject(err);
+          return;
+        }
+
         resolve();
-      })
+      });
     });
   }
 }

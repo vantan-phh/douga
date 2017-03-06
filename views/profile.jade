@@ -1,0 +1,10 @@
+extends layout
+
+block head
+  link(rel="stylesheet", href="/stylesheets/profile.css")
+  link(rel="stylesheet", href="/stylesheets/header.css")
+  
+block body
+  include header
+  - let targetImage = `/images/${target.icon}.png`;
+  img.profileIcon(src=targetImage)

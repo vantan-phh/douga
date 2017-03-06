@@ -8,5 +8,6 @@ app.use("/register", routes.register);
 app.use("/session", routes.session);
 app.use("/", sessionCheck, routes.home);
 app.use("/search", routes.search);
+app.use("/profile", routes.profile);
 
 module.exports = app;

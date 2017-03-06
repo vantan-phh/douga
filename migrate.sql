@@ -31,3 +31,10 @@ CREATE TABLE `to_follow` (
   `follower_id` int(11) NOT NULL,
   `target_id` int(11) NOT NULL
 )
+
+CREATE TABLE `sessions` (
+  `session_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `expires` int(11) unsigned NOT NULL,
+  `data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+  PRIMARY KEY (`session_id`)
+)

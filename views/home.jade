@@ -19,15 +19,5 @@ block body
         div.update
           h4 更新
       div.postingPlace
-        - for(var i = posts.length - 1; i >= 0; i--) {
-          div.allPosts
-            - let src = `/images/${posts[i].user.icon}.png`
-            img.icon(src=src)
-            div.postRight
-              div.nameSpace
-                a #{posts[i].user.name}
-              div.textSpace
-                p  #{posts[i].text}
-        - }
     
       

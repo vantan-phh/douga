@@ -7,10 +7,10 @@ header
             a.hov(href="/") ホーム
       div.searchBox
         form(action="/search" method="post")
-          input.textarea(type="text" maxlength="256" name="text" placeholder="検索" autocomplete="off")
+          input.textarea(maxlength="256" name="text" placeholder="検索" autocomplete="off" value=searchText)
           div.buttonSpace
             input.searchButton(type="image" src="/images/searchButton.png")
     div.headerRight
-      - let src = `images/${user.icon}.png`
-      img.icon(src=src)
+      - let image = `/images/${user.icon}.png`;
+      img.icon(src=image)
         

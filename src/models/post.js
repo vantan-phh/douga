@@ -50,30 +50,56 @@ class Post {
     })
   }
 
-  static search(text) {
+  static search(info) {
     return new Promise((resolve, reject) => {
-      text = "\"" + text + "\"";
+      let text = "\"" + info.text + "\"";
 
-      elasticSearchClient.search("psns", "posts", {
+      let searchQuery = {
         "query" : {
           "query_string": {
             "default_field" : "text",
             "query": text
           }
         },
-        "size": 10,
+        "size": 15,
         "sort": [{
           "id": {
             "order": "desc"
           }
         }]
-      }).on("data", (data) => {
+      }
+
+      if(info.lastId) {
+        searchQuery.query = {
+          "filtered": {
+            "query": {
+              "query_string": {
+                "default_field" : "text",
+                "query": text
+              }
+            },
+            "filter": {
+              "range": {
+                "id": {
+                  "gt": info.lastId
+                }
+              }
+            }
+          }
+        }
+      }
+
+
+
+      elasticSearchClient.search("psns", "posts", searchQuery)
+      .on("data", (data) => {
         data = JSON.parse(data);
 
         if(data.error) {
           reject(data);
           return;
         }
+
 
         let posts = {};
         let duplicateId = {};

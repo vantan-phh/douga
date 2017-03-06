@@ -3,6 +3,7 @@ extends layout
 block head
   link(rel="stylesheet", href="stylesheets/search.css")
   link(rel="stylesheet", href="stylesheets/header.css")
+  script(src="javascripts/search.js")
 
 block body
   include header
@@ -11,14 +12,4 @@ block body
       div.update
         h4 更新
       div.posts
-        - for(var i = posts.length - 1; i >= 0; i--) {
-          div.allPosts
-            - let src = `/images/${posts[i].user.icon}.png`
-            img.icon(src=src)
-            div.postRight
-              div.nameSpace
-                h5 #{posts[i].user.name}
-              div.textSpace
-                p  #{posts[i].text}
-        - }
     
