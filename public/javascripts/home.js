@@ -30,7 +30,7 @@ $(() => {
   function postsGet() {
     $.post("/postsget", {lastId: lastId}, (data) => {
       if(data[0]) {
-        lastId = data[data.length - 1].id;
+        lastId = data[0].id;
         postPush(data);
       }
     }, "json");
@@ -50,6 +50,7 @@ $(() => {
     let date = new Date();
 
     $.post("/posting", {text: postingText.value}, (data) => {
+      lastId = data.id;
       postPush([data]);
       postingText.value = "";
       posting.style.backgroundColor = "#E6E6E6";
@@ -75,7 +76,7 @@ $(() => {
 
   function postPush(data) {
 
-    for(var i = 0; i < data.length; i++) {
+    for(var i = data.length - 1; i >= 0; i--) {
       var newPost = document.createElement("div");
       newPost.innerHTML = `<a href=/profile/${data[i].user_id}><img class="icon" src=/images/${data[i].user.icon}.png></a><div class="postRight"><div class="nameSpace"><h5>${data[i].user.name}</h5><div class="textSpace"><p>${data[i].text}</p></div></div></div>`
       newPost.className = "allPosts";

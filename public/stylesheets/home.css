@@ -48,14 +48,6 @@
   overflow: hidden;
 }
 
-.icon {
-  height: 50px;
-  width: 50px;
-  margin: 10px 10px 20px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
 .timeLine {
   width: 550px;
   margin: auto;

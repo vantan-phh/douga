@@ -3,8 +3,16 @@ extends layout
 block head
   link(rel="stylesheet", href="/stylesheets/profile.css")
   link(rel="stylesheet", href="/stylesheets/header.css")
+  script(src="/javascripts/peer.js")
+  script(src="/javascripts/call.js")
   
 block body
   include header
   - let targetImage = `/images/${target.icon}.png`;
-  img.profileIcon(src=targetImage)
+  div.user
+    div.profile
+      img.profileIcon(src=targetImage)
+      h4.userName= target.name
+      button.callButton 通話
+    div.timeLine
+    

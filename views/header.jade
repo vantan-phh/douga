@@ -1,3 +1,4 @@
+audio.audio
 header
   div.head
     div.headerLeft
@@ -12,5 +13,13 @@ header
             input.searchButton(type="image" src="/images/searchButton.png")
     div.headerRight
       - let image = `/images/${user.icon}.png`;
-      img.icon(src=image)
+      img.icon.headIcon(src=image)
+      p.online オンライン
+      
+      div.phoneZone
+        img.headIcon.phone(src="/images/phone1.png")
+        img.headIcon.phone(src="/images/phone2.png")
+        p.phoneText
+        
+
         

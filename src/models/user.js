@@ -29,14 +29,9 @@ class User {
         resolve([]);
         return;
       }
-      let query = "SELECT * FROM `users` WHERE `id` IN (?"
+      let query = "SELECT * FROM `users` WHERE `id` IN (?) LIMIT ?";
 
-      for(var i = 0; i < ids.length - 1; i++) query += ",?";
-      query += ") LIMIT ?";
-
-      ids.push(ids.length);
-
-      db.query(query, ids, (err, res) => {
+      db.query(query, [ids, ids.length], (err, res) => {
         if(err) {
           reject(err);
           return;
@@ -95,24 +90,24 @@ class User {
       let password = hashCreate(info.password, salt);
       let icon = "undefined";
 
-      let insertData = [
-        info.email,
-        info.userName,
-        password,
-        salt,
-        icon,
-        0,
-        0,
-        date,
-        date
-      ];
+      let insertData = {
+        mail: info.email,
+        name: info.userName,
+        password: password,
+        salt: salt,
+        icon: icon,
+        follow_count: 0,
+        follower_count: 0,
+        created_at: date,
+        update_at: date
+      };
 
       db.query(query, insertData, (err, res) => {
         if(err) {
           reject(err);
           return;
         }
-        
+
         resolve(res.insertId);
       });
     });
@@ -177,10 +172,11 @@ class User {
         let targetId = [];
 
         for(var i = 0; i < res.length; i++) {
-          targetId.push(res.target_id);
+          targetId.push(res[i].target_id);
         }
 
         User.finds(targetId).then((data) => {
+          console.log("c");
           resolve({data: data, ids: targetId});
 
         }).catch((err) => {
@@ -192,12 +188,12 @@ class User {
 
   getTimeLine(lastId) {
     return new Promise((resolve, reject) => {
-
       this.followUser().then((result) => {
         let data = result.data;
         let ids = result.ids;
 
-        User.publicFind(this.id).then((user) => {
+        User.find(this.id).then((user) => {
+
           data.push(user);
           ids.push(this.id);
 
@@ -206,14 +202,14 @@ class User {
           for(var i = 0; i < data.length; i++) {
             usersData[data[i].id] = data[i];
           }
-          let query = "SELECT * FROM `posts` WHERE `user_id` IN (?";
 
-          for(var i = 0; i < data.length - 1; i++) query += ",?";
-          query += ") LIMIT 30 ";
+          let query = "SELECT * FROM `posts` WHERE `user_id` IN (?)";
 
-          if(lastId) query += "OFFSET " + (lastId - 46);
+          query += lastId
+            ? (" LIMIT 30 OFFSET " + (lastId - 46))
+            : " ORDER BY `created_at` DESC LIMIT 30";
 
-          db.query(query, ids, (err, res) => {
+          db.query(query, [ids], (err, res) => {
             if(err) {
               reject(err);
               return;

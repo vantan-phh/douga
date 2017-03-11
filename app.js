@@ -40,7 +40,13 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(__dirname + "/public"));
 app.use(rooting);
-app.use(peerServer);
+
+process.on('uncaughtException', function(err) {
+  console.error(err);
+});
+
+var listened = app.listen(process.env.PORT || 3000, '0.0.0.0');
+app.use("/api", peerServer(listened));
 
 app.use(function(req, res, next) {
   var err = new Error("Not Found");
@@ -53,11 +59,5 @@ app.use(function(err, req, res, next) {
   console.error(err);
   res.render("error");
 });
-
-process.on('uncaughtException', function(err) {
-  console.error(err);
-});
-
-app.listen(process.env.PORT || 3000);
 
 module.exports = server;

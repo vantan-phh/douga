@@ -1,3 +1,5 @@
-let peerServer = require("peer").PeerServer({port: 9000, path: "/peerjs"});
+let peer = require("peer");
 
-module.exports = peerServer;
+module.exports = function(server, options) {
+  return peer.ExpressPeerServer(server, options);
+}

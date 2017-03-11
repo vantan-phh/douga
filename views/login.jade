@@ -7,7 +7,7 @@ block body
   div.login
     h1.title ログイン
     div.input
-      form(action="/login" method="post")
+      form(action="/session/login" method="post")
         input.info(type="email" name="email" placeholder="メールアドレス" maxlength="320" required)
         input.info(type="password" name="password" placeholder="パスワード" maxlength="1000" required)
         button.submit(type="submit")

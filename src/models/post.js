@@ -90,7 +90,6 @@ class Post {
       }
 
 
-
       elasticSearchClient.search("psns", "posts", searchQuery)
       .on("data", (data) => {
         data = JSON.parse(data);
@@ -99,7 +98,6 @@ class Post {
           reject(data);
           return;
         }
-
 
         let posts = {};
         let duplicateId = {};
