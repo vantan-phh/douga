@@ -26,8 +26,22 @@ $(() => {
 
   function answer(call) {
     call.answer(myStream);
+
     call.on("stream", (stream) => {
       audio.src = window.URL.createObjectURL(stream);
+    });
+
+    call.on("close", () => {
+      peer.destroy();
+      peer = null;
+
+      phoneReset(phone[0]);
+
+      phoneText.innerHTML = "通話終了";
+
+      setTimeout(() => {
+        phoneText.innerHTML = "";
+      }, 5000);
     });
   }
 
@@ -70,6 +84,19 @@ $(() => {
       audio.src = window.URL.createObjectURL(stream);
       audio.play();
     });
+
+    call.on("close", () => {
+      peer.destroy();
+      peer = null;
+
+      phoneReset(phone[0]);
+
+      phoneText.innerHTML = "通話終了";
+
+      setTimeout(() => {
+        phoneText.innerHTML = "";
+      }, 5000);
+    });
   }
 
   setInterval(() => {
@@ -78,6 +105,8 @@ $(() => {
         if(info.callUser) {
           callAnswer(info.callUser)
         }
+
+        console.log(info);
 
         if(info.fail) {
           peer.destroy();
@@ -122,8 +151,6 @@ $(() => {
           phoneText.innerHTML = "";
 
           phoneReset(phone[0]);
-
-          $.post("/disconnection", {userId: callUser.id});
         }
       });
     }
@@ -158,7 +185,14 @@ $(() => {
 
       peer.on("open", () => {
         peerId = peer.id;
-        $.post("/call", {target: target, peerId: peerId});
+        $.post("/call", {target: target, peerId: peerId}, (err) => {
+          if(err) {
+            phoneText.innerHTML = "通話失敗";
+            setTimeout(() => {
+              phoneText.innerHTML = "";
+            }, 5000);
+          }
+        });
       });
 
       peer.on("call", (call) => {
@@ -178,8 +212,6 @@ $(() => {
           phoneReset(phone[0])
 
           phoneText.innerHTML = "";
-
-          $.post("/disconnection", {userId: target});
         }
       });
     }

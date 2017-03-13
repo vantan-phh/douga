@@ -47,6 +47,8 @@ router.post("/connection", (req, res) => {
     res.status(200).send({callUser: callUser[req.session.userId]});
 
     callUser[req.session.userId] = null;
+  }else {
+    res.send();
   }
 });
 
@@ -57,8 +59,10 @@ router.post("/call", (req, res) => {
   User.find(req.session.userId).then((user) => {
     if(userStatus[targetId] && date - userStatus[targetId] < 10000) {
       callUser[targetId] = {peerId: req.body.peerId, name: user.name, id: user.id};
+      res.send();
+    }else {
+      res.send("fail");
     }
-    res.send();
   });
 });
 
